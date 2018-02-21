@@ -1,0 +1,81 @@
+rm *.exe
+rm miracl.a
+cp mirdef.h64 mirdef.h
+gcc -c -m64 -O0 -g mrcore.c
+gcc -c -m64 -O0 -g mrarth0.c
+gcc -c -m64 -O0 -g mrarth1.c
+gcc -c -m64 -O0 -g mrarth2.c
+gcc -c -m64 -O0 -g mralloc.c
+gcc -c -m64 -O0 -g mrsmall.c
+gcc -c -m64 -O0 -g mrio1.c
+gcc -c -m64 -O0 -g mrio2.c
+gcc -c -m64 -O0 -g mrgcd.c
+gcc -c -m64 -O0 -g mrjack.c
+gcc -c -m64 -O0 -g mrxgcd.c
+gcc -c -m64 -O0 -g mrarth3.c
+gcc -c -m64 -O0 -g mrbits.c
+gcc -c -m64 -O0 -g mrrand.c
+gcc -c -m64 -O0 -g mrprime.c
+gcc -c -m64 -O0 -g mrcrt.c
+gcc -c -m64 -O0 -g mrscrt.c
+gcc -c -m64 -O0 -g mrmonty.c
+gcc -c -m64 -O0 -g mrpower.c
+gcc -c -m64 -O0 -g mrsroot.c
+gcc -c -m64 -O0 -g mrcurve.c
+gcc -c -m64 -O0 -g mrfast.c
+gcc -c -m64 -O0 -g mrshs.c
+gcc -c -m64 -O0 -g mrshs256.c
+gcc -c -m64 -O0 -g mrshs512.c
+gcc -c -m64 -O0 -g mrsha3.c
+gcc -c -m64 -O0 -g mrfpe.c
+gcc -c -m64 -O0 -g mraes.c
+gcc -c -m64 -O0 -g mrgcm.c
+gcc -c -m64 -O0 -g mrlucas.c
+gcc -c -m64 -O0 -g mrzzn2.c
+gcc -c -m64 -O0 -g mrzzn2b.c
+gcc -c -m64 -O0 -g mrzzn3.c
+gcc -c -m64 -O0 -g mrzzn4.c
+gcc -c -m64 -O0 -g mrecn2.c
+gcc -c -m64 -O0 -g mrstrong.c
+gcc -c -m64 -O0 -g mrbrick.c
+gcc -c -m64 -O0 -g mrebrick.c
+gcc -c -m64 -O0 -g mrec2m.c
+gcc -c -m64 -O0 -g mrgf2m.c
+gcc -c -m64 -O0 -g mrflash.c
+gcc -c -m64 -O0 -g mrfrnd.c
+gcc -c -m64 -O0 -g mrdouble.c
+gcc -c -m64 -O0 -g mrround.c
+gcc -c -m64 -O0 -g mrbuild.c
+gcc -c -m64 -O0 -g mrflsh1.c
+gcc -c -m64 -O0 -g mrpi.c
+gcc -c -m64 -O0 -g mrflsh2.c
+gcc -c -m64 -O0 -g mrflsh3.c
+gcc -c -m64 -O0 -g mrflsh4.c
+cp mrmuldv.g64 mrmuldv.c
+gcc -c -m64 -O0 -g mrmuldv.c
+ar rc miracl.a mrcore.o mrarth0.o mrarth1.o mrarth2.o mralloc.o mrsmall.o mrzzn2.o mrzzn3.o
+ar r miracl.a mrio1.o mrio2.o mrjack.o mrgcd.o mrxgcd.o mrarth3.o mrbits.o mrecn2.o mrzzn4.o
+ar r miracl.a mrrand.o mrprime.o mrcrt.o mrscrt.o mrmonty.o mrcurve.o mrsroot.o mrzzn2b.o
+ar r miracl.a mrpower.o mrfast.o mrshs.o mrshs256.o mraes.o mrlucas.o mrstrong.o mrgcm.o    
+ar r miracl.a mrflash.o mrfrnd.o mrdouble.o mrround.o mrbuild.o
+ar r miracl.a mrflsh1.o mrpi.o mrflsh2.o mrflsh3.o mrflsh4.o 
+ar r miracl.a mrbrick.o mrebrick.o mrec2m.o mrgf2m.o mrmuldv.o mrshs512.o mrsha3.o mrfpe.o
+rm mr*.o
+gcc -m64 -O0 -g bmark.c miracl.a -o bmark
+gcc -m64 -O0 -g fact.c miracl.a -o fact
+g++ -c -m64 -O0 -g big.cpp
+g++ -c -m64 -O0 -g zzn.cpp
+g++ -c -m64 -O0 -g ecn.cpp
+g++ -c -m64 -O0 -g ec2.cpp
+g++ -c -m64 -O0 -g crt.cpp
+g++ -m64 -O0 -g mersenne.cpp big.o miracl.a -o mersenne
+g++ -m64 -O0 -g brent.cpp big.o zzn.o miracl.a -o brent
+g++ -c -m64 -O0 -g flash.cpp
+g++ -m64 -O0 -g sample.cpp flash.o miracl.a -o sample
+g++ -m64 -O0 -g ecsgen.cpp ecn.o big.o miracl.a -o ecsgen
+g++ -m64 -O0 -g ecsign.cpp ecn.o big.o miracl.a -o ecsign
+g++ -m64 -O0 -g ecsver.cpp ecn.o big.o miracl.a -o ecsver
+g++ -m64 -O0 -g pk-demo.cpp ecn.o big.o miracl.a -o pk-demo
+g++ -c -m64 -O0 -g polymod.cpp
+g++ -c -m64 -O0 -g poly.cpp
+g++ -m64 -O0 -g schoof.cpp polymod.o poly.o ecn.o crt.o zzn.o big.o miracl.a -o schoof
