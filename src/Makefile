@@ -26,6 +26,7 @@ all: ${MIRACLLIBRARY} ${PROXYLIB} proxylib_test
 withmiracl: ${MIRACLLIBRARY} ${PROXYLIBWITHMIRACL}
 miracllib: ${MIRACLLIBRARY}
 proxylib: ${PROXYLIB}
+pairingsetup: ${MIRACLLIBRARY} ${PROXYLIB} pairing_setup
 
 ${MIRACLLIBRARY}:
 	cd ${MIRACLPATH}; bash linux64_O0; cd -

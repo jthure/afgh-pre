@@ -47,7 +47,7 @@ BenchOp::Mean()
   double result=0.; 
   long validTimings = 0;
   for (long i=0; i < mNumTimings; i++) { 
-    cout << mTimings[i] << endl;
+    // cout << mTimings[i] << endl;
     if (mTimings[i] >= 0) {
       result += mTimings[i];
       validTimings++;
