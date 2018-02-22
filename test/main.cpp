@@ -1,8 +1,8 @@
+#define BENCHMARKING
+
 #include "proxylib_api.h"
 #include "proxylib.h"
 #include "proxylib_pre1.h"
-
-#define BENCHMARKING
 
 #ifdef BENCHMARKING
   #include "proxylib_benchmark.h"
@@ -14,6 +14,7 @@
 #include <string>
 #include <cstring>
 #include <sys/time.h>
+#include <functional>
 
 #ifdef BENCHMARKING
 static struct timeval gTstart, gTend;
@@ -23,15 +24,22 @@ extern Benchmark gBenchmark;
 
 #ifdef BENCHMARKING
 Benchmark gBenchmark(NUMBENCHMARKS);
-// gBenchmark.InitOP(SCHEME_PRE1, 1000, )
 #endif
 
-Miracl precison(400, 0);
+Miracl precision(400, 0);
 static CurveParams gParams;
 using namespace std;
 
+int call_n_times(function<void()> func, size_t n){
+  for(size_t i = 0; i < n; ++i){
+    func();
+  }
+}
+
 int main()
 {
+
+  InitBenchmarks(gBenchmark, 100);
 
   initLibrary();
   PRE1_generate_params(gParams);
@@ -58,44 +66,15 @@ int main()
   ProxyCiphertext_PRE1 newCiphertext;
 
   int iterations = 100;
-  std::chrono::high_resolution_clock::rep sum = 0;
-  for (int i = 0; i < iterations; ++i)
-  {
-    auto t1 = std::chrono::high_resolution_clock::now();
+  call_n_times([&plaintext1, &pk1, &ciphertext] {
     PRE1_level2_encrypt(gParams, plaintext1, pk1, ciphertext);
-    auto t2 = std::chrono::high_resolution_clock::now();
-    auto dur = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count();
-    sum += dur;
-  }
-  cout << "Average lvl2-encryption time: " << (double)sum / iterations << " ms" << endl;
-
-  sum = 0;
-  for (int i = 0; i < iterations; ++i)
-  {
-    auto t1 = std::chrono::high_resolution_clock::now();
+  }, iterations);
+  call_n_times([&ciphertext, &delKey, &newCiphertext] {
     PRE1_reencrypt(gParams, ciphertext, delKey, newCiphertext);
-    auto t2 = std::chrono::high_resolution_clock::now();
-    auto dur = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count();
-    sum += dur;
-    // std::cout << dur << " milliseconds" << endl;
-  }
-  cout << "Average re-encryption time: " << (double)sum / iterations << " ms" << endl;
-
-  sum = 0;
-  bool correct = true;
-  for (int i = 0; i < iterations; ++i)
-  {
-    auto t1 = std::chrono::high_resolution_clock::now();
+  }, iterations);
+  call_n_times([&newCiphertext, &sk2, &plaintext2] {
     PRE1_decrypt(gParams, newCiphertext, sk2, plaintext2);
-    auto t2 = std::chrono::high_resolution_clock::now();
-    auto dur = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count();
-    sum += dur;
-    correct = correct && (plaintext1 == plaintext2);
-  }
-  cout << "Average decryption time: " << (double)sum / iterations << " ms. "
-       << "All decryptions correct?: " << correct
-       << endl;
-
+  }, iterations);
   cout << gBenchmark << endl;
 
   return 0;
