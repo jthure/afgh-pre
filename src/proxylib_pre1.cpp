@@ -99,9 +99,9 @@
 #include <sys/time.h>
 
 using namespace std;
-
+#define BENCHMARKING
 #ifdef BENCHMARKING
-	#include "benchmark.h"
+	#include "proxylib_benchmark.h"
 #endif
 #include "proxylib_api.h"
 #include "proxylib.h"

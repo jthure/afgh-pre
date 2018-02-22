@@ -100,7 +100,7 @@
 using namespace std;
 
 #ifdef BENCHMARKING
-	#include "benchmark.h"
+#include "proxylib_benchmark.h"
 #endif
 #include "proxylib_api.h"
 #include "proxylib.h"

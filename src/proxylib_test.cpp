@@ -99,9 +99,9 @@
 #include <sys/time.h>
 
 using namespace std;
-
+#define BENCHMARKING
 #ifdef BENCHMARKING
-	#include "benchmark.h"
+	#include "proxylib_benchmark.h"
 #endif
 #include "proxylib_api.h"
 #include "proxylib.h"
@@ -125,7 +125,7 @@ using namespace std;
 #include "proxylib_pre1.h"
 
 #define NUMENCRYPTIONS 100
-Miracl precison(50, 0);
+Miracl precision(32, 0);
 static CurveParams gParams;
 int testNum = 0, testsSuccess = 0;
 
@@ -511,4 +511,6 @@ int main()
   cout << endl << "All tests complete." << endl;
   cout << testsSuccess << " succeeded out of " <<
     testNum << " total." << endl;
+
+  cout << gBenchmark << endl;
 }

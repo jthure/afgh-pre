@@ -104,7 +104,7 @@ using namespace std;
 #include "proxylib_api.h"
 #include "proxylib.h"
 #ifdef BENCHMARKING
-#include "benchmark.h"
+#include "proxylib_benchmark.h"
 #endif
 
 #ifdef WIN32
@@ -113,7 +113,7 @@ using namespace std;
 #endif
 
 BOOL gDebugPrint = TRUE;
-Miracl precision(32,0);
+extern Miracl precision;
 
 //
 // Library initialization

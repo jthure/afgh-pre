@@ -1,6 +1,6 @@
 PROXYLIBWITHMIRACL = ../src/proxylibmiracl.a
-AFGHPATH = /usr/local/include/afgh
-MIRACLHPATH = /usr/local/include/miracl
+AFGHPATH = ../src/
+MIRACLHPATH = ../miracl
 CC = g++
 CCFLAGS = -I${MIRACLHPATH} -I${AFGHPATH} -O0 -g -std=c++11
 CCLIBS = -lstdc++
