@@ -432,6 +432,7 @@ BOOL PRE1_decrypt(CurveParams &params, ProxyCiphertext_PRE1 &ciphertext, ProxySK
   SAFESTATIC ECn del;
   SAFESTATIC ZZn2 temp;
   SAFESTATIC ZZn2 result;
+  int type = LEVELONEDECTIMING;
 
  // Handle each type of ciphertext
  switch(ciphertext.type) {
@@ -443,6 +444,7 @@ BOOL PRE1_decrypt(CurveParams &params, ProxyCiphertext_PRE1 &ciphertext, ProxySK
  case CIPH_REENCRYPTED:
    // temp = c1^inv(a2)
    temp = pow(ciphertext.c1b, inverse(secretKey.a2, params.qsquared));
+   type = REENCDECTIMING;
    break;
  case CIPH_SECOND_LEVEL:
    // temp = e(c1, a1 * P)
@@ -451,6 +453,7 @@ BOOL PRE1_decrypt(CurveParams &params, ProxyCiphertext_PRE1 &ciphertext, ProxySK
      PRINT_DEBUG_STRING("Decryption pairing failed.");
      return FALSE;
    }
+   type = LEVELTWODECTIMING;
    break;
  default:
    PRINT_DEBUG_STRING("Decryption failed: invalid ciphertext type.");
@@ -463,7 +466,7 @@ BOOL PRE1_decrypt(CurveParams &params, ProxyCiphertext_PRE1 &ciphertext, ProxySK
 
 #ifdef BENCHMARKING
   gettimeofday(&gTend, &gTz);
-  gBenchmark.CollectTiming(LEVELONEDECTIMING, CalculateUsecs(gTstart, gTend));
+  gBenchmark.CollectTiming(type, CalculateUsecs(gTstart, gTend));
 #endif
 
   return true;

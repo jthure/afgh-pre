@@ -89,7 +89,7 @@ Benchmark::CollectTiming(int opnum, long microseconds)
 }
 
 BOOL
-Benchmark::GetStats(int opnum, double &mean, double &median, double &stddev)
+Benchmark::GetStats(int opnum, double &mean, double &median, double &stddev) const
 {
   if (opnum > mNumops) {
     return FALSE;
@@ -102,14 +102,16 @@ Benchmark::GetStats(int opnum, double &mean, double &median, double &stddev)
 
 ostream& operator<<(ostream& s, const Benchmark &benchmark)
 {
-  double mean, median = 0, stddev = 0;
+  double mean = 0, median = 0, stddev = 0;
   char *description;
 
   s << "Benchmark Results" << endl;
   for (int i = 0; i < benchmark.mNumops; i++) {
     //benchmark.GetStats(i, mean, median, stddev);
     //description = benchmark.GetDescription(i);
-    mean = benchmark.mStats[i].Mean();
+
+    benchmark.GetStats(i, mean, median, stddev);
+    // mean = benchmark.mStats[i].Mean();
     description = benchmark.mStats[i].mDesc;
 
     s << "Operation " << i << " (" << description << "): mean="

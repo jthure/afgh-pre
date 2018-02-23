@@ -15,6 +15,7 @@
 #include <cstring>
 #include <sys/time.h>
 #include <functional>
+#include <cstdlib>
 
 #ifdef BENCHMARKING
 static struct timeval gTstart, gTend;
@@ -26,7 +27,7 @@ extern Benchmark gBenchmark;
 Benchmark gBenchmark(NUMBENCHMARKS);
 #endif
 
-Miracl precision(400, 0);
+Miracl precision(32, 0);
 static CurveParams gParams;
 using namespace std;
 
@@ -36,46 +37,45 @@ int call_n_times(function<void()> func, size_t n){
   }
 }
 
-int main()
-{
-
-  InitBenchmarks(gBenchmark, 100);
-
+int main() {
+  InitBenchmarks(gBenchmark, 1000);
   initLibrary();
   PRE1_generate_params(gParams);
+  
+  ProxyPK_PRE1 pk1, pk2;
+  ProxySK_PRE1 sk1, sk2;
+  ProxyCiphertext_PRE1 lvl1Ciphertext, lvl2Ciphertext, reencryptedCiphertext;
+  ECn reencKey;
+  Big plaintext1;
+  Big plaintext2;
 
-  ProxyPK_PRE1 pk1;
-  ProxySK_PRE1 sk1;
-  PRE1_keygen(gParams, pk1, sk1);
-  char b[600];
-  int len = pk1.serialize(SERIALIZE_HEXASCII, b, 600);
-  // cout << b << endl;
-  ProxyPK_PRE1 pk2;
-  ProxySK_PRE1 sk2;
-  PRE1_keygen(gParams, pk2, sk2);
-  ECn delKey;
-  PRE1_delegate(gParams, pk2, sk1, delKey);
-
-  string plaintext_string = string(32, 'F');
-  char *c_plaintext_string = new char[plaintext_string.length() + 1];
-  std::strcpy(c_plaintext_string, plaintext_string.c_str());
-  Big plaintext1(c_plaintext_string);
-  cout << "Length of plaintext in bits: " << plaintext1.bits() << endl;
-  Big plaintext2 = 0;
-  ProxyCiphertext_PRE1 ciphertext;
-  ProxyCiphertext_PRE1 newCiphertext;
-
-  int iterations = 100;
-  call_n_times([&plaintext1, &pk1, &ciphertext] {
-    PRE1_level2_encrypt(gParams, plaintext1, pk1, ciphertext);
-  }, iterations);
-  call_n_times([&ciphertext, &delKey, &newCiphertext] {
-    PRE1_reencrypt(gParams, ciphertext, delKey, newCiphertext);
-  }, iterations);
-  call_n_times([&newCiphertext, &sk2, &plaintext2] {
-    PRE1_decrypt(gParams, newCiphertext, sk2, plaintext2);
-  }, iterations);
+  miracl *mip = &precision;
+  mip->IOBASE = 16;
+  std::srand(std::time(nullptr));
+  const int STR_LEN = 32;
+  const size_t ITERATIONS = 10;
+  char plaintext_str[STR_LEN + 1];
+  size_t iter, str_iter;
+  
+  for ( iter = 0; iter < ITERATIONS; ++iter)
+  {
+    for (str_iter = 0; str_iter < STR_LEN; ++str_iter)
+    {
+      sprintf(plaintext_str + str_iter, "%X", std::rand() % 16);
+    }
+    // cout << plaintext_str << endl;
+    plaintext1 = plaintext_str;
+    plaintext2 = 0;
+    PRE1_keygen(gParams, pk1, sk1);
+    PRE1_keygen(gParams, pk2, sk2);
+    PRE1_delegate(gParams, pk2, sk1, reencKey);
+    PRE1_level2_encrypt(gParams, plaintext1, pk1, lvl2Ciphertext);
+    PRE1_level1_encrypt(gParams, plaintext1, pk1, lvl1Ciphertext);
+    PRE1_reencrypt(gParams, lvl2Ciphertext, reencKey, reencryptedCiphertext);
+    PRE1_decrypt(gParams, reencryptedCiphertext, sk2, plaintext2);
+    PRE1_decrypt(gParams, lvl2Ciphertext, sk1, plaintext2);
+    PRE1_decrypt(gParams, lvl1Ciphertext, sk1, plaintext2);
+  }
   cout << gBenchmark << endl;
-
   return 0;
 }

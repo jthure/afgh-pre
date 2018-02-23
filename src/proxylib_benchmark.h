@@ -46,7 +46,7 @@ class Benchmark {
 
   BOOL InitOp(int opnum, int maxTimings, char *description);
   BOOL CollectTiming(int opnum, long microseconds);
-  BOOL GetStats(int opnum, double &mean, double &median, double &stddev);
+  BOOL GetStats(int opnum, double &mean, double &median, double &stddev) const;
   char *GetDescription(int opnum) { if (opnum >= mNumops) { return NULL; }
   return mStats[opnum].mDesc; }
 };
